@@ -10,18 +10,16 @@ class AdminRoleMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next, string $role): Response
     {
-        $admin = auth('admin')->user();
-
         // Check if admin is authenticated
-        if (!$admin) {
+        if (!auth('admin')->check()) {
             return redirect()->route('admin.login')
-                ->with('error', __('Please login to access this page.'));
+                ->with('error', __('Please login to continue.'));
         }
+
+        $admin = auth('admin')->user();
 
         // Check if admin is active
         if (!$admin->is_active) {
@@ -31,8 +29,8 @@ class AdminRoleMiddleware
         }
 
         // Check if admin has the required role
-        if ($admin->role->name !== $role && !$admin->isSuperAdmin()) {
-            abort(403, __('You do not have permission to access this page.'));
+        if ($admin->role->name !== $role) {
+            abort(403, __('You do not have permission to access this resource.'));
         }
 
         return $next($request);

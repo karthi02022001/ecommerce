@@ -682,9 +682,27 @@
                                     <button class="action-btn-circle" title="{{ __('Quick View') }}" onclick="quickView({{ $product->id }})">
                                         <i class="bi bi-eye"></i>
                                     </button>
-                                    <button class="action-btn-circle" title="{{ __('Add to Wishlist') }}" onclick="addToWishlist({{ $product->id }})">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
+                                    
+
+                                      @auth('web')
+                                            @php
+                                                $inWishlist = $product->isInWishlist(auth('web')->id());
+                                            @endphp
+
+                                            <button type="button"
+                                                class="action-btn-circle wishlist-toggle {{ $inWishlist ? 'active' : '' }}"
+                                                data-product-id="{{ $product->id }}"
+                                                data-in-wishlist="{{ $inWishlist ? 'true' : 'false' }}"
+                                                data-product-name="test"
+                                                title="{{ $inWishlist ? __('Remove from Wishlist') : __('Add to Wishlist') }}">
+                                                <i class="bi {{ $inWishlist ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+                                            </button>
+                                        @else
+                                            <a href="{{ route('login') }}" class="action-btn-circle"
+                                                title="{{ __('Login to add to wishlist') }}">
+                                                <i class="bi bi-heart"></i>
+                                            </a>
+                                        @endauth
                                     <a href="{{ route('products.show', $product->slug) }}" class="action-btn-circle" title="{{ __('View Details') }}">
                                         <i class="bi bi-info-circle"></i>
                                     </a>
@@ -800,6 +818,165 @@
         select.addEventListener('change', function() {
             document.getElementById('filterForm').submit();
         });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.wishlist-toggle').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const productId = this.dataset.productId;
+                const inWishlist = this.dataset.inWishlist === 'true';
+                const productName = this.dataset.productName;
+
+                if (inWishlist) {
+                    removeFromWishlist(productId, this);
+                } else {
+                    addToWishlist(productId, this);
+                }
+            });
+        });
+
+        function addToWishlist(productId, button) {
+            const originalHtml = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+            fetch('/wishlist/add', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                })
+            })
+            .then(response => {
+                // Check if response is ok
+                if (!response.ok) {
+                    // Try to parse error response
+                    return response.json().then(errData => {
+                        throw new Error(errData.message || 'Server error');
+                    }).catch(() => {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update button state
+                    button.classList.add('active');
+                    button.dataset.inWishlist = 'true';
+                    button.innerHTML = '<i class="bi bi-heart-fill"></i>';
+                    button.title = '{{ __('Remove from Wishlist') }}';
+
+                    // Update wishlist count
+                    updateWishlistCount(data.wishlist_count);
+
+                    showToast('success', data.message);
+                } else {
+                    button.innerHTML = originalHtml;
+                    showToast('error', data.message || '{{ __('Failed to add to wishlist') }}');
+                }
+                button.disabled = false;
+            })
+            .catch(error => {
+                console.error('Wishlist Add Error:', error);
+                button.innerHTML = originalHtml;
+                button.disabled = false;
+                showToast('error', error.message || '{{ __('An error occurred. Please try again.') }}');
+            });
+        }
+
+        function removeFromWishlist(productId, button) {
+            const originalHtml = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+            fetch(`/wishlist/product/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                // Check if response is ok
+                if (!response.ok) {
+                    // Try to parse error response
+                    return response.json().then(errData => {
+                        throw new Error(errData.message || 'Server error');
+                    }).catch(() => {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update button state
+                    button.classList.remove('active');
+                    button.dataset.inWishlist = 'false';
+                    button.innerHTML = '<i class="bi bi-heart"></i>';
+                    button.title = '{{ __('Add to Wishlist') }}';
+
+                    // Update wishlist count
+                    updateWishlistCount(data.wishlist_count);
+
+                    showToast('success', data.message);
+                } else {
+                    button.innerHTML = originalHtml;
+                    showToast('error', data.message || '{{ __('Failed to remove from wishlist') }}');
+                }
+                button.disabled = false;
+            })
+            .catch(error => {
+                console.error('Wishlist Remove Error:', error);
+                button.innerHTML = originalHtml;
+                button.disabled = false;
+                showToast('error', error.message || '{{ __('An error occurred. Please try again.') }}');
+            });
+        }
+
+        function updateWishlistCount(count) {
+            // Update all wishlist count badges
+            const wishlistBadges = document.querySelectorAll('.wishlist-count, .icon-badge');
+            wishlistBadges.forEach(badge => {
+                if (badge.closest('.icon-wrapper')?.querySelector('.bi-heart') || 
+                    badge.classList.contains('wishlist-count')) {
+                    badge.textContent = count;
+                    badge.style.display = count > 0 ? 'flex' : 'none';
+                }
+            });
+        }
+
+        function showToast(type, message) {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.wishlist-toast');
+            existingToasts.forEach(toast => toast.remove());
+
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed wishlist-toast`;
+            toast.style.cssText = 'top: 80px; right: 20px; z-index: 9999; min-width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+            toast.innerHTML = `
+                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 3000);
+        }
     });
 </script>
 @endpush

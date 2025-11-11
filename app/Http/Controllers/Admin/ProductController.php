@@ -63,6 +63,8 @@ class ProductController extends Controller
 
     public function create()
     {
+
+        
         $admin = auth('admin')->user();
         $admin->logActivity('view', 'products', 'Accessed create product form');
 
@@ -109,8 +111,9 @@ class ProductController extends Controller
                 'price' => $validated['price'],
                 'compare_price' => $validated['compare_price'] ?? null,
                 'stock_quantity' => $validated['stock_quantity'],
-                'is_active' => $request->has('is_active') ? 1 : 0,
-                'is_featured' => $request->has('is_featured') ? 1 : 0,
+                'is_active' => $validated['is_active'],
+                'is_featured' => $validated['is_featured'],
+
             ]);
 
             // Create translations
@@ -205,8 +208,9 @@ class ProductController extends Controller
                 'price' => $validated['price'],
                 'compare_price' => $validated['compare_price'] ?? null,
                 'stock_quantity' => $validated['stock_quantity'],
-                'is_active' => $request->has('is_active') ? 1 : 0,
-                'is_featured' => $request->has('is_featured') ? 1 : 0,
+                'is_active' => $validated['is_active'],
+                'is_featured' => $validated['is_featured'],
+
             ]);
 
             // Update translations

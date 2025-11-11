@@ -17,6 +17,7 @@ class CategoryController extends Controller
         $admin->logActivity('view', 'categories', 'Viewed categories list');
 
         $categories = Category::with(['translations'])
+            ->withCount('products')
             ->orderBy('sort_order')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -24,6 +25,15 @@ class CategoryController extends Controller
         $locales = ['en', 'es'];
 
         return view('admin.categories.index', compact('categories', 'locales'));
+    }
+
+    public function show($id)
+    {
+        $category = Category::with('translations')->findOrFail($id);
+
+        auth('admin')->user()->logActivity('view', 'categories', "Viewed category: {$category->name()}");
+
+        return response()->json($category);
     }
 
     public function store(Request $request)

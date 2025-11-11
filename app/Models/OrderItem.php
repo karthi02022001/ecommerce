@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderItem extends Model
 {
-    use HasFactory;
-
     public $timestamps = false;
 
     protected $fillable = [
@@ -17,26 +14,37 @@ class OrderItem extends Model
         'product_name',
         'product_sku',
         'quantity',
-        'unit_price',
-        'total_price',
+        'price',
+        'total'
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'unit_price' => 'decimal:2',
-            'total_price' => 'decimal:2',
-        ];
-    }
+    protected $casts = [
+        'quantity' => 'integer',
+        'price' => 'decimal:2',
+        'total' => 'decimal:2',
+    ];
 
-    // Relationships
+    /**
+     * Relationship: Item belongs to an order
+     */
     public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
+    /**
+     * Relationship: Item belongs to a product (nullable)
+     */
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Calculate total price
+     */
+    public function calculateTotal()
+    {
+        return $this->price * $this->quantity;
     }
 }

@@ -74,7 +74,6 @@ body {
     transition: all 0.3s ease;
     z-index: 1000;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    padding-bottom: 40px;
 }
 
 .admin-sidebar::-webkit-scrollbar {
@@ -102,6 +101,10 @@ body {
 .admin-sidebar.collapsed .sidebar-brand-text,
 .admin-sidebar.collapsed .nav-text,
 .admin-sidebar.collapsed .nav-badge,
+.admin-sidebar.collapsed .nav-arrow {
+    display: none !important;
+}
+
 .admin-sidebar.collapsed .submenu {
     display: none !important;
 }
@@ -164,6 +167,7 @@ body {
 
 .nav-item {
     margin-bottom: 5px;
+    position: relative;
 }
 
 .nav-link {
@@ -213,45 +217,62 @@ body {
     padding: 2px 8px;
     border-radius: 10px;
     font-weight: 600;
+    margin-left: auto;
 }
 
 .nav-arrow {
     font-size: 0.8rem;
+    margin-left: auto;
     transition: transform 0.3s ease;
 }
 
-.nav-item.active .nav-arrow {
+/* ============================================
+   SUBMENU - CRITICAL FIX
+   ============================================ */
+
+/* Submenu Container - Default Hidden State */
+.nav-item.has-submenu .submenu {
+    list-style: none;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0;
+    margin: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+}
+
+/* Submenu Open State - When .open class is added */
+.nav-item.has-submenu.open .submenu {
+    max-height: 500px;
+    opacity: 1;
+    padding: 5px 0;
+}
+
+/* Arrow Rotation When Open */
+.nav-item.has-submenu.open .nav-arrow {
     transform: rotate(90deg);
 }
 
-/* Submenu (improved) */
+/* Active Parent Menu Should Show Submenu */
+.nav-item.has-submenu.active .submenu {
+    max-height: 500px;
+    opacity: 1;
+    padding: 5px 0;
+}
+
+.nav-item.has-submenu.active .nav-arrow {
+    transform: rotate(90deg);
+}
+
+/* Submenu Items */
 .submenu {
-    list-style: none;
-    background: rgba(0, 0, 0, 0.2);
-    display: none;
-    flex-direction: column;
-    padding-left: 0;
-    transition: all 0.3s ease;
-}
-
-.nav-item.has-submenu.open>.submenu {
-    display: flex;
-    animation: slideDown 0.3s ease forwards;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    padding: 0;
+    margin: 0;
 }
 
 .submenu li {
+    list-style: none;
     margin: 0;
 }
 
@@ -936,8 +957,6 @@ textarea.form-control {
 @media (max-width: 768px) {
     .admin-sidebar {
         transform: translateX(-100%);
-        position: fixed;
-        width: var(--sidebar-width);
     }
 
     .admin-sidebar.mobile-active {

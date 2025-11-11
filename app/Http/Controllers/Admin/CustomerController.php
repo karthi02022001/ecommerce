@@ -140,4 +140,64 @@ class CustomerController extends Controller
             return back()->with('error', __('Error deleting customer: ') . $e->getMessage());
         }
     }
+    public function customers(Request $request)
+    {
+        $admin = auth('admin')->user();
+        $admin->logActivity('view', 'reports', 'Viewed customers report');
+
+        // Date range
+        $dateFrom = $request->input('date_from', now()->startOfMonth()->format('Y-m-d'));
+        $dateTo = $request->input('date_to', now()->format('Y-m-d'));
+
+        // Statistics
+        $stats = [
+            'total_customers' => User::count(),
+            'new_customers' => User::whereBetween('created_at', [$dateFrom, $dateTo])->count(),
+            'customers_with_orders' => User::has('orders')->count(),
+            'average_customer_value' => User::withSum(['orders' => function ($query) {
+                $query->whereIn('status', ['completed', 'processing', 'shipped']);
+            }], 'total_amount')
+                ->get()
+                ->avg('orders_sum_total_amount') ?? 0,
+        ];
+
+        // Customer growth chart
+        $customerGrowth = User::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->whereBetween('created_at', [$dateFrom, $dateTo])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Top customers by orders
+        $topCustomersByOrders = User::withCount('orders')
+            ->orderBy('orders_count', 'desc')
+            ->take(10)
+            ->get();
+
+        // Top customers by spending
+        $topCustomersBySpending = User::withSum(['orders' => function ($query) {
+            $query->whereIn('status', ['completed', 'processing', 'shipped']);
+        }], 'total_amount')
+            ->orderBy('orders_sum_total_amount', 'desc')
+            ->take(10)
+            ->get();
+
+        // Recent customers
+        $recentCustomers = User::with(['orders' => function ($query) {
+            $query->latest()->take(1);
+        }])
+            ->latest()
+            ->take(20)
+            ->get();
+
+        return view('admin.reports.customers', compact(
+            'stats',
+            'customerGrowth',
+            'topCustomersByOrders',
+            'topCustomersBySpending',
+            'recentCustomers',
+            'dateFrom',
+            'dateTo'
+        ));
+    }
 }

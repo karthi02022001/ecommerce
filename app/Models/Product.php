@@ -140,4 +140,109 @@ class Product extends Model
         }
         return round((($this->compare_price - $this->price) / $this->compare_price) * 100);
     }
+    public function wishlistedBy()
+    {
+        return $this->belongsToMany(User::class, 'wishlists')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get wishlist count for this product
+     */
+    public function getWishlistCountAttribute(): int
+    {
+        return $this->wishlistedBy()->count();
+    }
+
+    /**
+     * Check if product is in user's wishlist
+     */
+    public function isInWishlist($userId = null): bool
+    {
+        if (!$userId && auth('web')->check()) {
+            $userId = auth('web')->id();
+        }
+
+        if (!$userId) {
+            return false;
+        }
+
+        return Wishlist::isInWishlist($userId, $this->id);
+    }
+
+    /**
+     * Get average rating for this product
+     */
+    public function averageRating()
+    {
+        return round($this->approvedReviews()->avg('rating') ?? 0, 1);
+    }
+
+    /**
+     * Get total review count
+     */
+    public function reviewCount()
+    {
+        return $this->approvedReviews()->count();
+    }
+
+    /**
+     * Get rating distribution (count per rating 1-5)
+     */
+    public function ratingDistribution()
+    {
+        $distribution = [];
+        for ($i = 5; $i >= 1; $i--) {
+            $distribution[$i] = $this->approvedReviews()->where('rating', $i)->count();
+        }
+        return $distribution;
+    }
+
+    /**
+     * Get percentage for each rating
+     */
+    public function ratingPercentages()
+    {
+        $total = $this->reviewCount();
+        if ($total == 0) return array_fill(1, 5, 0);
+
+        $distribution = $this->ratingDistribution();
+        $percentages = [];
+
+        foreach ($distribution as $rating => $count) {
+            $percentages[$rating] = round(($count / $total) * 100);
+        }
+
+        return $percentages;
+    }
+
+    /**
+     * Get star rating HTML with average
+     */
+    public function getStarsHtmlAttribute()
+    {
+        $average = $this->averageRating();
+        $fullStars = floor($average);
+        $hasHalfStar = ($average - $fullStars) >= 0.5;
+        $html = '';
+
+        for ($i = 1; $i <= 5; $i++) {
+            if ($i <= $fullStars) {
+                $html .= '<i class="bi bi-star-fill text-warning"></i>';
+            } elseif ($i == $fullStars + 1 && $hasHalfStar) {
+                $html .= '<i class="bi bi-star-half text-warning"></i>';
+            } else {
+                $html .= '<i class="bi bi-star text-muted"></i>';
+            }
+        }
+
+        return $html;
+    }
+    /**
+     * Relationship: Approved reviews only
+     */
+    public function approvedReviews()
+    {
+        return $this->hasMany(ProductReview::class)->where('is_approved', 1);
+    }
 }

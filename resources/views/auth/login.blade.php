@@ -306,6 +306,24 @@
         border-left: 4px solid var(--danger-color);
     }
     
+    .alert-custom.alert-success-custom {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+    }
+    
+    .alert-custom.alert-success-custom ul li {
+        color: #155724;
+    }
+    
+    .alert-custom.alert-info-custom {
+        background: #d1ecf1;
+        border-left: 4px solid #17a2b8;
+    }
+    
+    .alert-custom.alert-info-custom .alert-content {
+        color: #0c5460;
+    }
+    
     .alert-custom ul {
         margin: 0;
         padding-left: 20px;
@@ -318,6 +336,56 @@
     
     .alert-custom li:last-child {
         margin-bottom: 0;
+    }
+    
+    .alert-custom .alert-content {
+        display: flex;
+        align-items: start;
+        gap: 10px;
+    }
+    
+    .alert-custom .alert-content i {
+        font-size: 1.3rem;
+        margin-top: 2px;
+    }
+    
+    .alert-custom .alert-text {
+        flex: 1;
+    }
+    
+    .alert-custom .alert-text strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 1rem;
+    }
+    
+    .alert-custom .alert-text p {
+        margin: 0 0 12px 0;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    .alert-custom .btn-sm {
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn-register-suggest {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+    }
+    
+    .btn-register-suggest:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+        color: white;
     }
     
     .auth-benefits {
@@ -391,6 +459,19 @@
                     
                     <!-- Body -->
                     <div class="auth-body">
+                        {{-- Success Message --}}
+                        @if(session('success'))
+                        <div class="alert-custom alert-success-custom">
+                            <div class="alert-content">
+                                <i class="bi bi-check-circle-fill" style="color: #28a745;"></i>
+                                <div class="alert-text">
+                                    {{ session('success') }}
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        
+                        {{-- Error Messages --}}
                         @if($errors->any())
                         <div class="alert-custom">
                             <ul>
@@ -399,6 +480,22 @@
                                 @endforeach
                             </ul>
                         </div>
+                        
+                        {{-- Show Register Suggestion if email not found --}}
+                        @if(session('show_register_link'))
+                        <div class="alert-custom alert-info-custom">
+                            <div class="alert-content">
+                                <i class="bi bi-person-plus-fill" style="color: #17a2b8;"></i>
+                                <div class="alert-text">
+                                    <strong>{{ __('New to our store?') }}</strong>
+                                    <p>{{ __('Create an account to start shopping and enjoy exclusive benefits!') }}</p>
+                                    <a href="{{ route('register') }}" class="btn-sm btn-register-suggest">
+                                        <i class="bi bi-person-plus-fill me-1"></i>{{ __('Create Account') }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                         @endif
                         
                         <form action="{{ route('login') }}" method="POST" id="loginForm">
@@ -441,10 +538,10 @@
                             
                             <!-- Forgot Password Link -->
                             <div class="forgot-password">
-                                <a href="#">{{ __('Forgot Password?') }}</a>
+                                <a href="{{ route('password.request') }}">{{ __('Forgot Password?') }}</a>
                             </div>
                             
-                            <!-- Remember Me -->
+                            {{-- <!-- Remember Me -->
                             <div class="form-check">
                                 <input type="checkbox" 
                                        class="form-check-input" 
@@ -453,7 +550,7 @@
                                 <label class="form-check-label" for="remember">
                                     {{ __('Keep me signed in') }}
                                 </label>
-                            </div>
+                            </div> --}}
                             
                             <!-- Submit Button -->
                             <button type="submit" class="btn-auth-primary">
@@ -462,20 +559,18 @@
                         </form>
                         
                         <!-- Social Login Divider -->
+                        @if(config('services.google.client_id'))
                         <div class="auth-divider">
                             <span>{{ __('or continue with') }}</span>
                         </div>
                         
                         <!-- Social Login Buttons -->
-                        <a href="#" class="social-login-btn">
+                        <a href="{{ route('auth.google') }}" class="social-login-btn">
                             <i class="bi bi-google"></i>
                             {{ __('Continue with Google') }}
                         </a>
+                        @endif
                         
-                        <a href="#" class="social-login-btn">
-                            <i class="bi bi-facebook"></i>
-                            {{ __('Continue with Facebook') }}
-                        </a>
                     </div>
                     
                     <!-- Footer -->

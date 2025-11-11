@@ -17,6 +17,7 @@
 <!-- Statistics Cards -->
 <div class="stats-row">
     <!-- Total Revenue -->
+    @if(auth('admin')->user()->hasAnyPermission(['dashboard.analytics', 'reports.sales']))
     <div class="stat-card">
         <div class="stat-header">
             <div class="stat-label">{{ __('Total Revenue') }}</div>
@@ -24,15 +25,17 @@
                 <i class="bi bi-currency-dollar"></i>
             </div>
         </div>
-        <div class="stat-value">${{ number_format($stats['total_revenue'], 2) }}</div>
+        <div class="stat-value">₹{{ number_format($stats['total_revenue'], 2) }}</div>
         <div class="stat-footer">
             <span class="stat-change positive">
-                <i class="bi bi-arrow-up"></i> {{ __('This Month') }}: ${{ number_format($stats['monthly_revenue'], 2) }}
+                <i class="bi bi-arrow-up"></i> {{ __('This Month') }}: ₹{{ number_format($stats['monthly_revenue'], 2) }}
             </span>
         </div>
     </div>
+    @endif
     
     <!-- Total Orders -->
+    @if(auth('admin')->user()->hasPermission('orders.view'))
     <div class="stat-card success">
         <div class="stat-header">
             <div class="stat-label">{{ __('Total Orders') }}</div>
@@ -45,8 +48,10 @@
             <span class="text-muted">{{ __('Pending') }}: {{ $stats['pending_orders'] }}</span>
         </div>
     </div>
+    @endif
     
     <!-- Total Products -->
+    @if(auth('admin')->user()->hasPermission('products.view'))
     <div class="stat-card warning">
         <div class="stat-header">
             <div class="stat-label">{{ __('Total Products') }}</div>
@@ -59,8 +64,10 @@
             <span class="text-muted">{{ __('Low Stock') }}: {{ $stats['low_stock_count'] }}</span>
         </div>
     </div>
+    @endif
     
     <!-- Total Customers -->
+    @if(auth('admin')->user()->hasPermission('customers.view'))
     <div class="stat-card info">
         <div class="stat-header">
             <div class="stat-label">{{ __('Total Customers') }}</div>
@@ -73,11 +80,13 @@
             <span class="text-muted">{{ __('New This Month') }}: {{ $stats['new_customers'] }}</span>
         </div>
     </div>
+    @endif
 </div>
 
 <!-- Content Row -->
 <div class="row">
     <!-- Recent Orders -->
+    @if(auth('admin')->user()->hasPermission('orders.view'))
     <div class="col-lg-8">
         <div class="content-card">
             <div class="card-header">
@@ -106,7 +115,7 @@
                             <tr>
                                 <td><strong>#{{ $order->id }}</strong></td>
                                 <td>{{ $order->customer->name ?? 'Guest' }}</td>
-                                <td>${{ number_format($order->total_amount, 2) }}</td>
+                                <td>₹{{ number_format($order->total_amount, 2) }}</td>
                                 <td>
                                     @if($order->status === 'pending')
                                         <span class="badge badge-warning">{{ __('Pending') }}</span>
@@ -138,9 +147,12 @@
             </div>
         </div>
     </div>
+    @endif
     
-    <!-- Top Products -->
+    <!-- Top Products & Alerts -->
     <div class="col-lg-4">
+        <!-- Top Products -->
+        @if(auth('admin')->user()->hasPermission('products.view'))
         <div class="content-card">
             <div class="card-header">
                 <h3 class="card-title">{{ __('Top Selling Products') }}</h3>
@@ -165,7 +177,7 @@
                     </div>
                     <div style="text-align: right;">
                         <div style="font-weight: 600; color: var(--primary-color);">
-                            ${{ number_format($product->price, 2) }}
+                            ₹{{ number_format($product->price, 2) }}
                         </div>
                     </div>
                 </div>
@@ -174,9 +186,10 @@
                 @endforelse
             </div>
         </div>
+        @endif
         
         <!-- Low Stock Alert -->
-        @if($lowStockProducts->count() > 0)
+        @if(auth('admin')->user()->hasPermission('products.edit') && $lowStockProducts->count() > 0)
         <div class="content-card mt-3">
             <div class="card-header">
                 <h3 class="card-title">{{ __('Low Stock Alert') }}</h3>

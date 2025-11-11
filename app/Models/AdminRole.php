@@ -20,6 +20,9 @@ class AdminRole extends Model
         'is_active' => 'boolean',
     ];
 
+    // Note: Uncomment appends only when explicitly needed
+    // protected $appends = ['admin_count', 'permission_count'];
+
     // Relationships
     public function admins()
     {
@@ -33,29 +36,29 @@ class AdminRole extends Model
             'admin_role_permissions',
             'role_id',
             'permission_id'
-        )->withTimestamps();
+        );
     }
 
     // Permission Management
     public function givePermissionTo($permission)
     {
-        $permissionModel = $permission instanceof AdminPermission 
-            ? $permission 
+        $permissionModel = $permission instanceof AdminPermission
+            ? $permission
             : AdminPermission::where('name', $permission)->firstOrFail();
 
         $this->permissions()->syncWithoutDetaching([$permissionModel->id]);
-        
+
         return $this;
     }
 
     public function revokePermissionTo($permission)
     {
-        $permissionModel = $permission instanceof AdminPermission 
-            ? $permission 
+        $permissionModel = $permission instanceof AdminPermission
+            ? $permission
             : AdminPermission::where('name', $permission)->firstOrFail();
 
         $this->permissions()->detach($permissionModel->id);
-        
+
         return $this;
     }
 
@@ -66,7 +69,7 @@ class AdminRole extends Model
             ->toArray();
 
         $this->permissions()->sync($permissionIds);
-        
+
         return $this;
     }
 

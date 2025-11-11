@@ -554,15 +554,12 @@
                         </div>
                         
                         <!-- Social Registration Buttons -->
-                        <a href="#" class="social-login-btn">
+                        <a href="{{ route('auth.google') }}" class="social-login-btn">
                             <i class="bi bi-google"></i>
                             {{ __('Sign up with Google') }}
                         </a>
                         
-                        <a href="#" class="social-login-btn">
-                            <i class="bi bi-facebook"></i>
-                            {{ __('Sign up with Facebook') }}
-                        </a>
+                        
                     </div>
                     
                     <!-- Footer -->
