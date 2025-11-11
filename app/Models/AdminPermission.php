@@ -24,7 +24,9 @@ class AdminPermission extends Model
             'admin_role_permissions',
             'permission_id',
             'role_id'
-        )->withTimestamps();
+        );
+        // Note: Only add ->withTimestamps() AFTER running the SQL fix
+        // that adds the updated_at column to admin_role_permissions table
     }
 
     // Scopes

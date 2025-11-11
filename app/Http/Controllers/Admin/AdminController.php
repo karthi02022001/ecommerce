@@ -84,7 +84,7 @@ class AdminController extends Controller
 
     public function show($id)
     {
-        $adminUser = Admin::with(['role', 'activityLogs'])->findOrFail($id);
+        $adminUser = Admin::with(['role.permissions', 'activityLogs'])->findOrFail($id);
 
         // Get recent activity
         $recentActivity = $adminUser->activityLogs()

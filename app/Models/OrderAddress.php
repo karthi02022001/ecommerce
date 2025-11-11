@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderAddress extends Model
 {
-    use HasFactory;
-
     public $timestamps = false;
 
     protected $fillable = [
@@ -23,29 +20,56 @@ class OrderAddress extends Model
         'state',
         'postal_code',
         'country',
-        'phone',
+        'phone'
     ];
 
-    // Relationships
+    /**
+     * Relationship: Address belongs to an order
+     */
     public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
-    // Helper method
-    public function fullName()
+    /**
+     * Get full name
+     */
+    public function getFullNameAttribute()
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return trim("{$this->first_name} {$this->last_name}");
     }
 
-    public function fullAddress()
+    /**
+     * Get formatted address
+     */
+    public function getFormattedAddressAttribute()
     {
-        $address = $this->address_line_1;
-        if ($this->address_line_2) {
-            $address .= ', ' . $this->address_line_2;
-        }
-        $address .= ', ' . $this->city . ', ' . $this->state . ' ' . $this->postal_code;
-        $address .= ', ' . $this->country;
-        return $address;
+        $lines = [
+            $this->full_name,
+            $this->company,
+            $this->address_line_1,
+            $this->address_line_2,
+            "{$this->city}, {$this->state} {$this->postal_code}",
+            $this->country,
+            $this->phone
+        ];
+
+        return implode("\n", array_filter($lines));
+    }
+
+    /**
+     * Scope: Billing addresses
+     */
+    public function scopeBilling($query)
+    {
+        return $query->where('type', 'billing');
+    }
+
+    /**
+     * Scope: Shipping addresses
+     */
+    public function scopeShipping($query)
+    {
+        return $query->where('type', 'shipping');
     }
 }

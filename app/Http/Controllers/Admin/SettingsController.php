@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\AdminSetting;
+use App\Models\Setting;
 use App\Models\ThemePreset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -16,7 +16,8 @@ class SettingsController extends Controller
         $admin = auth('admin')->user();
         $admin->logActivity('view', 'settings', 'Viewed general settings');
 
-        $settings = AdminSetting::get();
+        // Get settings as object for easier access
+        $settings = Setting::asObject();
 
         return view('admin.settings.general', compact('settings'));
     }
@@ -40,23 +41,20 @@ class SettingsController extends Controller
         ]);
 
         try {
-            $settings = AdminSetting::get();
-
-            $settings->update([
-                'site_name' => $validated['site_name'],
-                'admin_email' => $validated['admin_email'],
-                'meta_title' => $validated['meta_title'] ?? null,
-                'meta_description' => $validated['meta_description'] ?? null,
-                'meta_keywords' => $validated['meta_keywords'] ?? null,
-                'currency_code' => $validated['currency_code'],
-                'currency_symbol' => $validated['currency_symbol'],
-                'shipping_rate' => $validated['shipping_rate'] ?? 0,
-                'free_shipping_threshold' => $validated['free_shipping_threshold'] ?? 0,
-                'tax_rate' => $validated['tax_rate'] ?? 0,
-                'low_stock_threshold' => $validated['low_stock_threshold'] ?? 10,
-                'items_per_page' => $validated['items_per_page'] ?? 12,
-                'allow_guest_checkout' => $request->has('allow_guest_checkout') ? 1 : 0,
-            ]);
+            // Update each setting
+            Setting::set('store_name', $validated['site_name'], 'text', 'general');
+            Setting::set('admin_email', $validated['admin_email'], 'email', 'general');
+            Setting::set('meta_title', $validated['meta_title'] ?? '', 'text', 'general');
+            Setting::set('meta_description', $validated['meta_description'] ?? '', 'textarea', 'general');
+            Setting::set('meta_keywords', $validated['meta_keywords'] ?? '', 'text', 'general');
+            Setting::set('currency_code', $validated['currency_code'], 'text', 'general');
+            Setting::set('currency_symbol', $validated['currency_symbol'], 'text', 'general');
+            Setting::set('shipping_fee', $validated['shipping_rate'] ?? 0, 'number', 'general');
+            Setting::set('free_shipping_threshold', $validated['free_shipping_threshold'] ?? 0, 'number', 'general');
+            Setting::set('tax_rate', $validated['tax_rate'] ?? 0, 'number', 'general');
+            Setting::set('low_stock_threshold', $validated['low_stock_threshold'] ?? 10, 'number', 'general');
+            Setting::set('items_per_page', $validated['items_per_page'] ?? 12, 'number', 'general');
+            Setting::set('allow_guest_checkout', $request->has('allow_guest_checkout') ? '1' : '0', 'boolean', 'general');
 
             auth('admin')->user()->logActivity('update', 'settings', 'Updated general settings');
 
@@ -89,18 +87,10 @@ class SettingsController extends Controller
         try {
             $theme = ThemePreset::findOrFail($validated['theme_id']);
 
-            // Update active theme in settings
-            $settings = AdminSetting::get();
-            $settings->update([
-                'primary_color' => $theme->primary_color,
-                'secondary_color' => $theme->accent_color,
-            ]);
-
-            // Update active_theme setting
-            \App\Models\Setting::updateOrCreate(
-                ['key_name' => 'active_theme'],
-                ['value' => $theme->name]
-            );
+            // Update active theme setting
+            Setting::set('active_theme', $theme->name, 'select', 'appearance');
+            Setting::set('primary_color', $theme->primary_color, 'color', 'appearance');
+            Setting::set('accent_color', $theme->accent_color, 'color', 'appearance');
 
             auth('admin')->user()->logActivity('update', 'settings', "Applied theme: {$theme->display_name}");
 
@@ -123,7 +113,7 @@ class SettingsController extends Controller
         foreach ($locales as $locale) {
             $path = resource_path("lang/{$locale}.json");
             if (File::exists($path)) {
-                $translations[$locale] = json_decode(File::get($path), true);
+                $translations[$locale] = json_decode(File::get($path), true) ?? [];
             } else {
                 $translations[$locale] = [];
             }
@@ -155,7 +145,15 @@ class SettingsController extends Controller
                 $existing = json_decode(File::get($path), true) ?? [];
             }
 
-            $merged = array_merge($existing, $validated['translations']);
+            // Remove empty translations
+            $newTranslations = array_filter($validated['translations'], function ($value) {
+                return !empty(trim($value));
+            });
+
+            $merged = array_merge($existing, $newTranslations);
+
+            // Sort alphabetically
+            ksort($merged);
 
             // Save translations
             File::put($path, json_encode($merged, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));

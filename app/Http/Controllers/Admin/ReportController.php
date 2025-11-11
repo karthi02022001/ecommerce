@@ -37,11 +37,11 @@ class ReportController extends Controller
 
             'total_tax' => Order::whereIn('status', ['completed', 'processing', 'shipped'])
                 ->whereBetween('created_at', [$dateFrom, $dateTo])
-                ->sum('tax'),
+                ->sum('tax_amount'),
 
             'total_shipping' => Order::whereIn('status', ['completed', 'processing', 'shipped'])
                 ->whereBetween('created_at', [$dateFrom, $dateTo])
-                ->sum('shipping_fee'),
+                ->sum('shipping_amount'),
         ];
 
         // Daily sales chart

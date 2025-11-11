@@ -10,18 +10,16 @@ class AdminPermissionMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next, string $permission): Response
     {
-        $admin = auth('admin')->user();
-
         // Check if admin is authenticated
-        if (!$admin) {
+        if (!auth('admin')->check()) {
             return redirect()->route('admin.login')
-                ->with('error', __('Please login to access this page.'));
+                ->with('error', __('Please login to continue.'));
         }
+
+        $admin = auth('admin')->user();
 
         // Check if admin is active
         if (!$admin->is_active) {
@@ -30,14 +28,14 @@ class AdminPermissionMiddleware
                 ->with('error', __('Your account has been deactivated.'));
         }
 
-        // Super admins have all permissions
+        // Super admin has all permissions
         if ($admin->isSuperAdmin()) {
             return $next($request);
         }
 
         // Check if admin has the required permission
         if (!$admin->hasPermission($permission)) {
-            abort(403, __('You do not have permission to access this page.'));
+            abort(403, __('You do not have permission to access this resource.'));
         }
 
         return $next($request);
