@@ -44,10 +44,10 @@ class CustomerController extends Controller
         // Get order statistics
         $stats = [
             'total_orders' => $customer->orders()->count(),
-            'completed_orders' => $customer->orders()->where('status', 'completed')->count(),
+            'completed_orders' => $customer->orders()->where('status', 'delivered')->count(),
             'pending_orders' => $customer->orders()->where('status', 'pending')->count(),
             'total_spent' => $customer->orders()
-                ->whereIn('status', ['completed', 'processing', 'shipped'])
+                ->whereIn('status', ['delivered', 'processing', 'shipped'])
                 ->sum('total_amount'),
         ];
 
@@ -155,7 +155,7 @@ class CustomerController extends Controller
             'new_customers' => User::whereBetween('created_at', [$dateFrom, $dateTo])->count(),
             'customers_with_orders' => User::has('orders')->count(),
             'average_customer_value' => User::withSum(['orders' => function ($query) {
-                $query->whereIn('status', ['completed', 'processing', 'shipped']);
+                $query->whereIn('status', ['delivered', 'processing', 'shipped']);
             }], 'total_amount')
                 ->get()
                 ->avg('orders_sum_total_amount') ?? 0,
@@ -176,7 +176,7 @@ class CustomerController extends Controller
 
         // Top customers by spending
         $topCustomersBySpending = User::withSum(['orders' => function ($query) {
-            $query->whereIn('status', ['completed', 'processing', 'shipped']);
+            $query->whereIn('status', ['delivered', 'processing', 'shipped']);
         }], 'total_amount')
             ->orderBy('orders_sum_total_amount', 'desc')
             ->take(10)

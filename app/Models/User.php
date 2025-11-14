@@ -86,7 +86,7 @@ class User extends Authenticatable
 
     public function getCompletedOrdersAttribute(): int
     {
-        return $this->orders()->where('status', 'completed')->count();
+        return $this->orders()->where('status', 'delivered')->count();
     }
 
     public function getPendingOrdersAttribute(): int
@@ -109,7 +109,7 @@ class User extends Authenticatable
     public function totalSpent(): float
     {
         return $this->orders()
-            ->whereIn('status', ['completed', 'processing', 'shipped'])
+            ->whereIn('status', ['delivered', 'processing', 'shipped'])
             ->sum('total_amount');
     }
 

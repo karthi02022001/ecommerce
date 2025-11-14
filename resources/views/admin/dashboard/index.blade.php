@@ -25,10 +25,10 @@
                 <i class="bi bi-currency-dollar"></i>
             </div>
         </div>
-        <div class="stat-value">₹{{ number_format($stats['total_revenue'], 2) }}</div>
+        <div class="stat-value">${{ number_format($stats['total_revenue'], 2) }}</div>
         <div class="stat-footer">
             <span class="stat-change positive">
-                <i class="bi bi-arrow-up"></i> {{ __('This Month') }}: ₹{{ number_format($stats['monthly_revenue'], 2) }}
+                <i class="bi bi-arrow-up"></i> {{ __('This Month') }}: ${{ number_format($stats['monthly_revenue'], 2) }}
             </span>
         </div>
     </div>
@@ -115,7 +115,7 @@
                             <tr>
                                 <td><strong>#{{ $order->id }}</strong></td>
                                 <td>{{ $order->customer->name ?? 'Guest' }}</td>
-                                <td>₹{{ number_format($order->total_amount, 2) }}</td>
+                                <td>${{ number_format($order->total_amount, 2) }}</td>
                                 <td>
                                     @if($order->status === 'pending')
                                         <span class="badge badge-warning">{{ __('Pending') }}</span>
@@ -123,8 +123,8 @@
                                         <span class="badge badge-info">{{ __('Processing') }}</span>
                                     @elseif($order->status === 'shipped')
                                         <span class="badge badge-primary">{{ __('Shipped') }}</span>
-                                    @elseif($order->status === 'completed')
-                                        <span class="badge badge-success">{{ __('Completed') }}</span>
+                                    @elseif($order->status === 'delivered')
+                                        <span class="badge badge-success">{{ __('Delivered') }}</span>
                                     @else
                                         <span class="badge badge-danger">{{ __('Cancelled') }}</span>
                                     @endif
@@ -177,7 +177,7 @@
                     </div>
                     <div style="text-align: right;">
                         <div style="font-weight: 600; color: var(--primary-color);">
-                            ₹{{ number_format($product->price, 2) }}
+                            ${{ number_format($product->price, 2) }}
                         </div>
                     </div>
                 </div>

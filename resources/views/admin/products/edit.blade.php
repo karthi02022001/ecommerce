@@ -115,7 +115,7 @@
                                     {{ __('Price') }} <span style="color: var(--danger-color);">*</span>
                                 </label>
                                 <div class="input-group">
-                                    <span class="input-group-text">₹</span>
+                                    <span class="input-group-text">$</span>
                                     <input 
                                         type="number" 
                                         name="price" 
@@ -138,7 +138,7 @@
                             <div class="form-group">
                                 <label for="compare_price" class="form-label">{{ __('Compare at Price') }}</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">₹</span>
+                                    <span class="input-group-text">$</span>
                                     <input 
                                         type="number" 
                                         name="compare_price" 

@@ -52,7 +52,7 @@
                 <i class="bi bi-currency-dollar"></i>
             </div>
         </div>
-        <div class="stat-value">₹{{ number_format($stats['total_sales'] ?? 0, 2) }}</div>
+        <div class="stat-value">${{ number_format($stats['total_sales'] ?? 0, 2) }}</div>
         <div class="stat-footer">
             <span class="text-muted">{{ __('Revenue from completed orders') }}</span>
         </div>
@@ -80,7 +80,7 @@
                 <i class="bi bi-graph-up"></i>
             </div>
         </div>
-        <div class="stat-value">₹{{ number_format($stats['average_order'] ?? 0, 2) }}</div>
+        <div class="stat-value">${{ number_format($stats['average_order'] ?? 0, 2) }}</div>
         <div class="stat-footer">
             <span class="text-muted">{{ __('Average order value') }}</span>
         </div>
@@ -94,7 +94,7 @@
                 <i class="bi bi-receipt"></i>
             </div>
         </div>
-        <div class="stat-value">₹{{ number_format($stats['total_tax'] ?? 0, 2) }}</div>
+        <div class="stat-value">${{ number_format($stats['total_tax'] ?? 0, 2) }}</div>
         <div class="stat-footer">
             <span class="text-muted">{{ __('Tax collected') }}</span>
         </div>
@@ -111,7 +111,7 @@
                 <i class="bi bi-truck"></i>
             </div>
         </div>
-        <div class="stat-value">₹{{ number_format($stats['total_shipping'] ?? 0, 2) }}</div>
+        <div class="stat-value">${{ number_format($stats['total_shipping'] ?? 0, 2) }}</div>
         <div class="stat-footer">
             <span class="text-muted">{{ __('From shipping fees') }}</span>
         </div>
@@ -168,7 +168,7 @@
                             </div>
                             <div style="text-align: right;">
                                 <div style="font-weight: 600; color: var(--primary-color);">
-                                    ₹{{ number_format($status->total ?? 0, 2) }}
+                                    ${{ number_format($status->total ?? 0, 2) }}
                                 </div>
                             </div>
                         </div>
@@ -252,12 +252,12 @@
                         </td>
                         <td class="text-end">
                             <strong style="color: var(--success-color);">
-                                ₹{{ number_format($product->total_revenue ?? 0, 2) }}
+                                ${{ number_format($product->total_revenue ?? 0, 2) }}
                             </strong>
                         </td>
                         <td class="text-end">
                             <span class="text-muted">
-                                ₹{{ number_format($product->orderItems->avg('price') ?? 0, 2) }}
+                                ${{ number_format($product->orderItems->avg('price') ?? 0, 2) }}
                             </span>
                         </td>
                     </tr>
@@ -316,7 +316,7 @@
                         yAxisID: 'y'
                     },
                     {
-                        label: '{{ __("Revenue (₹)") }}',
+                        label: '{{ __("Revenue ($)") }}',
                         data: [
                             @foreach($dailySales as $day)
                                 {{ $day->revenue ?? 0 }},
@@ -358,7 +358,7 @@
                                     }
                                     if (context.parsed.y !== null) {
                                         if (context.datasetIndex === 1) {
-                                            label += '₹' + context.parsed.y.toFixed(2);
+                                            label += '$' + context.parsed.y.toFixed(2);
                                         } else {
                                             label += context.parsed.y;
                                         }
@@ -384,7 +384,7 @@
                             position: 'right',
                             title: {
                                 display: true,
-                                text: '{{ __("Revenue (₹)") }}'
+                                text: '{{ __("Revenue ($)") }}'
                             },
                             grid: {
                                 drawOnChartArea: false,

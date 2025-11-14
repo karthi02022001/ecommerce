@@ -25,20 +25,20 @@ class DashboardController extends Controller
             'total_categories' => Category::count(),
             'pending_orders' => Order::where('status', 'pending')->count(),
             'processing_orders' => Order::where('status', 'processing')->count(),
-            'completed_orders' => Order::where('status', 'completed')->count(),
+            'completed_orders' => Order::where('status', 'delivered')->count(),
             'cancelled_orders' => Order::where('status', 'cancelled')->count(),
         ];
 
         // Revenue statistics
-        $stats['total_revenue'] = Order::whereIn('status', ['completed', 'processing', 'shipped'])
+        $stats['total_revenue'] = Order::whereIn('status', ['delivered', 'processing', 'shipped'])
             ->sum('total_amount');
         
-        $stats['monthly_revenue'] = Order::whereIn('status', ['completed', 'processing', 'shipped'])
+        $stats['monthly_revenue'] = Order::whereIn('status', ['delivered', 'processing', 'shipped'])
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->sum('total_amount');
 
-        $stats['today_revenue'] = Order::whereIn('status', ['completed', 'processing', 'shipped'])
+        $stats['today_revenue'] = Order::whereIn('status', ['delivered', 'processing', 'shipped'])
             ->whereDate('created_at', today())
             ->sum('total_amount');
 
@@ -51,7 +51,7 @@ class DashboardController extends Controller
         // Top selling products
         $topProducts = Product::withCount(['orderItems' => function ($query) {
                 $query->whereHas('order', function ($q) {
-                    $q->whereIn('status', ['completed', 'processing', 'shipped']);
+                    $q->whereIn('status', ['delivered', 'processing', 'shipped']);
                 });
             }])
             ->orderBy('order_items_count', 'desc')
@@ -60,7 +60,7 @@ class DashboardController extends Controller
 
         // Sales chart data (last 7 days)
         $salesChart = Order::selectRaw('DATE(created_at) as date, COUNT(*) as orders, SUM(total_amount) as revenue')
-            ->whereIn('status', ['completed', 'processing', 'shipped'])
+            ->whereIn('status', ['delivered', 'processing', 'shipped'])
             ->where('created_at', '>=', now()->subDays(7))
             ->groupBy('date')
             ->orderBy('date')

@@ -217,8 +217,8 @@
                                         <span class="badge badge-info">{{ __('Processing') }}</span>
                                     @elseif($order->status === 'shipped')
                                         <span class="badge badge-primary">{{ __('Shipped') }}</span>
-                                    @elseif($order->status === 'completed')
-                                        <span class="badge badge-success">{{ __('Completed') }}</span>
+                                    @elseif($order->status === 'delivered')
+                                        <span class="badge badge-success">{{ __('Delivered') }}</span>
                                     @else
                                         <span class="badge badge-danger">{{ __('Cancelled') }}</span>
                                     @endif

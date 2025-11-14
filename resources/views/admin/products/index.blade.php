@@ -137,10 +137,10 @@
                         <td><code>{{ $product->sku }}</code></td>
                         <td>{{ $product->category->name() ?? '—' }}</td>
                         <td>
-                            <div style="font-weight: 600; color: var(--primary-color);">₹{{ number_format($product->price, 2) }}</div>
+                            <div style="font-weight: 600; color: var(--primary-color);">${{ number_format($product->price, 2) }}</div>
                             @if($product->compare_price)
                             <small style="text-decoration: line-through; color: var(--text-muted);">
-                                ₹{{ number_format($product->compare_price, 2) }}
+                                ${{ number_format($product->compare_price, 2) }}
                             </small>
                             @endif
                         </td>

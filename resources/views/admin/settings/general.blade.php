@@ -142,14 +142,14 @@
                                     name="currency_symbol" 
                                     id="currency_symbol" 
                                     class="form-control @error('currency_symbol') is-invalid @enderror" 
-                                    value="{{ old('currency_symbol', $settings->currency_symbol ?? '₹') }}"
+                                    value="{{ old('currency_symbol', $settings->currency_symbol ?? '$') }}"
                                     maxlength="5"
                                     required
                                 >
                                 @error('currency_symbol')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="form-text">{{ __('Symbol to display (e.g., $, €, ₹)') }}</small>
+                                <small class="form-text">{{ __('Symbol to display (e.g., $, €, $)') }}</small>
                             </div>
                         </div>
                     </div>
@@ -164,7 +164,7 @@
                             <div class="form-group">
                                 <label for="shipping_rate" class="form-label">{{ __('Default Shipping Rate') }}</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">{{ $settings->currency_symbol ?? '₹' }}</span>
+                                    <span class="input-group-text">{{ $settings->currency_symbol ?? '$' }}</span>
                                     <input 
                                         type="number" 
                                         name="shipping_rate" 
@@ -184,7 +184,7 @@
                             <div class="form-group">
                                 <label for="free_shipping_threshold" class="form-label">{{ __('Free Shipping Threshold') }}</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">{{ $settings->currency_symbol ?? '₹' }}</span>
+                                    <span class="input-group-text">{{ $settings->currency_symbol ?? '$' }}</span>
                                     <input 
                                         type="number" 
                                         name="free_shipping_threshold" 

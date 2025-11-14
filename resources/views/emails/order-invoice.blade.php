@@ -45,12 +45,12 @@
                         {{ __('Bill To', [], $locale) }}
                     </h3>
                     <p style="margin: 0; line-height: 1.8; color: #555;">
-                        <strong>{{ $order->billing_name }}</strong><br>
-                        {{ $order->billing_address }}<br>
-                        {{ $order->billing_city }}, {{ $order->billing_state }} {{ $order->billing_postal_code }}<br>
-                        {{ $order->billing_country }}<br>
-                        @if($order->billing_phone)
-                            {{ __('Phone:', [], $locale) }} {{ $order->billing_phone }}<br>
+                        <strong>{{  $order->billingAddress->full_name ?? $order->user->name }}</strong><br>
+                        {{ $order->billingAddress->address_line_1 }}<br>
+                        {{ $order->billingAddress->city}}, {{  $order->billingAddress->state}} {{$order->billingAddress->postal_code}}<br>
+                        {{ $order->billingAddress->country  }}<br>
+                        @if($order->billingAddress->phone)
+                            {{ __('Phone:', [], $locale) }} {{ $order->billingAddress->phone }}<br>
                         @endif
                         {{ __('Email:', [], $locale) }} {{ $order->customer_email }}
                     </p>
@@ -63,7 +63,7 @@
                     </h3>
                     <p style="margin: 0; line-height: 1.8; color: #555;">
                         <strong>{{ $order->shipping_name }}</strong><br>
-                        {{ $order->shipping_address }}<br>
+                        {{ $order->address_line_1     }}<br>
                         {{ $order->shipping_city }}, {{ $order->shipping_state }} {{ $order->shipping_postal_code }}<br>
                         {{ $order->shipping_country }}<br>
                         @if($order->shipping_phone)

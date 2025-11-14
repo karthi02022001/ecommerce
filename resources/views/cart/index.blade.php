@@ -70,7 +70,7 @@
                                             
                                             <!-- Price -->
                                             <td class="text-center">
-                                                <strong class="text-primary">₹{{ number_format($cartItem->price, 2) }}</strong>
+                                                <strong class="text-primary">${{ number_format($cartItem->price, 2) }}</strong>
                                             </td>
                                             
                                             <!-- Quantity -->
@@ -107,7 +107,7 @@
                                             
                                             <!-- Subtotal -->
                                             <td class="text-center">
-                                                <strong>₹{{ number_format($cartItem->subtotal(), 2) }}</strong>
+                                                <strong>${{ number_format($cartItem->subtotal(), 2) }}</strong>
                                             </td>
                                             
                                             <!-- Actions -->
@@ -155,7 +155,7 @@
                         <!-- Subtotal -->
                         <div class="d-flex justify-content-between mb-3">
                             <span class="text-muted">{{ __('Subtotal') }}</span>
-                            <strong>₹{{ number_format($cartTotal, 2) }}</strong>
+                            <strong>${{ number_format($cartTotal, 2) }}</strong>
                         </div>
                         
                         <!-- Estimated Shipping -->
@@ -173,7 +173,7 @@
                         <!-- Total -->
                         <div class="d-flex justify-content-between mb-4">
                             <h5 class="mb-0">{{ __('Total') }}</h5>
-                            <h5 class="mb-0 text-primary">₹{{ number_format($cartTotal, 2) }}</h5>
+                            <h5 class="mb-0 text-primary">${{ number_format($cartTotal, 2) }}</h5>
                         </div>
                         
                         <!-- Checkout Button -->
@@ -216,7 +216,7 @@
                         <div class="small text-muted">
                             <div class="mb-2">
                                 <i class="bi bi-truck me-2" style="color: #20b2aa;"></i>
-                                <strong>{{ __('Free Shipping') }}</strong> {{ __('on orders over ₹500') }}
+                                <strong>{{ __('Free Shipping') }}</strong> {{ __('on orders over $500') }}
                             </div>
                             <div class="mb-2">
                                 <i class="bi bi-arrow-clockwise me-2" style="color: #20b2aa;"></i>
@@ -231,7 +231,7 @@
                 </div>
 
                 <!-- Coupon Code (Optional) -->
-                <div class="card shadow-sm mt-4">
+               {{--  <div class="card shadow-sm mt-4">
                     <div class="card-header bg-white py-3">
                         <h6 class="mb-0">
                             <i class="bi bi-tag me-2"></i>{{ __('Have a Coupon?') }}
@@ -252,7 +252,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     @else

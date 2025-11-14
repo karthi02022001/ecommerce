@@ -67,7 +67,7 @@
                 <i class="bi bi-check-circle"></i>
             </div>
         </div>
-        <div class="stat-value">{{ number_format($stats['completed']) }}</div>
+        <div class="stat-value">{{ number_format($stats['delivered']) }}</div>
         <div class="stat-footer">
             <span class="text-muted">{{ __('Successfully Delivered') }}</span>
         </div>
@@ -298,7 +298,7 @@
                                         <li>
                                             <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
                                                 @csrf
-                                                @method('PUT')
+                                                
                                                 <input type="hidden" name="status" value="pending">
                                                 <button type="submit" class="dropdown-item">
                                                     <i class="bi bi-clock-history text-warning"></i> {{ __('Pending') }}
@@ -308,7 +308,7 @@
                                         <li>
                                             <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
                                                 @csrf
-                                                @method('PUT')
+                                                
                                                 <input type="hidden" name="status" value="processing">
                                                 <button type="submit" class="dropdown-item">
                                                     <i class="bi bi-arrow-repeat text-info"></i> {{ __('Processing') }}
@@ -318,7 +318,7 @@
                                         <li>
                                             <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
                                                 @csrf
-                                                @method('PUT')
+                                             
                                                 <input type="hidden" name="status" value="shipped">
                                                 <button type="submit" class="dropdown-item">
                                                     <i class="bi bi-truck text-primary"></i> {{ __('Shipped') }}
@@ -328,7 +328,7 @@
                                         <li>
                                             <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
                                                 @csrf
-                                                @method('PUT')
+                                               
                                                 <input type="hidden" name="status" value="delivered">
                                                 <button type="submit" class="dropdown-item">
                                                     <i class="bi bi-check-circle-fill text-success"></i> {{ __('Delivered') }}
@@ -339,7 +339,7 @@
                                         <li>
                                             <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
                                                 @csrf
-                                                @method('PUT')
+                                        
                                                 <input type="hidden" name="status" value="cancelled">
                                                 <button type="submit" class="dropdown-item">
                                                     <i class="bi bi-x-circle-fill text-danger"></i> {{ __('Cancelled') }}

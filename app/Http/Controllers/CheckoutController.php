@@ -225,6 +225,8 @@ class CheckoutController extends Controller
             // Get locale
             $locale = session('locale', app()->getLocale());
 
+          
+
             try {
                 Mail::to(auth()->user()->email)
                     ->send(new OrderConfirmation($order, $locale));

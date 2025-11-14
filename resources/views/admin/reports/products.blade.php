@@ -84,7 +84,7 @@
                 <i class="bi bi-currency-dollar"></i>
             </div>
         </div>
-        <div class="stat-value">₹{{ number_format($stats['total_inventory_value'] ?? 0, 2) }}</div>
+        <div class="stat-value">${{ number_format($stats['total_inventory_value'] ?? 0, 2) }}</div>
         <div class="stat-footer">
             <span class="text-muted">{{ __('Current stock value') }}</span>
         </div>
@@ -173,7 +173,7 @@
                         </div>
                         <div style="text-align: right;">
                             <div style="font-weight: 600; color: var(--success-color);">
-                                ₹{{ number_format($product->total_revenue ?? 0, 2) }}
+                                ${{ number_format($product->total_revenue ?? 0, 2) }}
                             </div>
                             <div style="font-size: 0.85rem; color: var(--text-muted);">
                                 {{ __('Revenue') }}
@@ -246,7 +246,7 @@
                         </td>
                         <td>{{ $product->category->name() }}</td>
                         <td><code>{{ $product->sku }}</code></td>
-                        <td>₹{{ number_format($product->price, 2) }}</td>
+                        <td>${{ number_format($product->price, 2) }}</td>
                         <td>
                             <span class="badge badge-warning">
                                 {{ $product->stock_quantity }} {{ __('left') }}
@@ -327,7 +327,7 @@
                         </td>
                         <td>{{ $product->category->name() }}</td>
                         <td><code>{{ $product->sku }}</code></td>
-                        <td>₹{{ number_format($product->price, 2) }}</td>
+                        <td>${{ number_format($product->price, 2) }}</td>
                         <td>
                             <span class="badge badge-danger">{{ __('Out of Stock') }}</span>
                         </td>

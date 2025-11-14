@@ -448,7 +448,7 @@
                                     <small class="order-item-qty">{{ __('Qty') }}: {{ $item->quantity }}</small>
                                 </div>
                                 <div class="order-item-price">
-                                    {{ $settings->currency_symbol }}{{ number_format($item->subtotal(), 2) }}
+                                    ${{ number_format($item->subtotal(), 2) }}
                                 </div>
                             </div>
                         @endforeach
@@ -458,7 +458,7 @@
                     <div class="pricing-summary">
                         <div class="pricing-row">
                             <span>{{ __('Subtotal') }}</span>
-                            <strong>{{ $settings->currency_symbol }}{{ number_format($subtotal, 2) }}</strong>
+                            <strong>${{ number_format($subtotal, 2) }}</strong>
                         </div>
                         <div class="pricing-row">
                             <span>{{ __('Shipping') }}</span>
@@ -466,18 +466,18 @@
                                 @if($shippingCost == 0)
                                     <span class="text-success">{{ __('Free') }}</span>
                                 @else
-                                    {{ $settings->currency_symbol }}{{ number_format($shippingCost, 2) }}
+                                    ${{ number_format($shippingCost, 2) }}
                                 @endif
                             </strong>
                         </div>
                         <div class="pricing-row">
                             <span>{{ __('Tax') }} ({{ $settings->tax_rate }}%)</span>
-                            <strong>{{ $settings->currency_symbol }}{{ number_format($taxAmount, 2) }}</strong>
+                            <strong>${{ number_format($taxAmount, 2) }}</strong>
                         </div>
                         <div class="pricing-divider"></div>
                         <div class="pricing-row pricing-total">
                             <strong>{{ __('Total') }}</strong>
-                            <strong class="total-amount">{{ $settings->currency_symbol }}{{ number_format($total, 2) }}</strong>
+                            <strong class="total-amount">${{ number_format($total, 2) }}</strong>
                         </div>
                     </div>
 

@@ -128,9 +128,9 @@
                         <h5 class="product-title">{{ $product->name() }}</h5>
                     </a>
                     <div class="product-price">
-                        ₹{{ number_format($product->price, 2) }}
+                        ${{ number_format($product->price, 2) }}
                         @if($product->hasDiscount())
-                            <span class="old-price">₹{{ number_format($product->compare_price, 2) }}</span>
+                            <span class="old-price">${{ number_format($product->compare_price, 2) }}</span>
                         @endif
                     </div>
                     @if($product->isInStock())
@@ -188,9 +188,9 @@
                         <h5 class="product-title">{{ $product->name() }}</h5>
                     </a>
                     <div class="product-price">
-                        ₹{{ number_format($product->price, 2) }}
+                        ${{ number_format($product->price, 2) }}
                         @if($product->hasDiscount())
-                            <span class="old-price">₹{{ number_format($product->compare_price, 2) }}</span>
+                            <span class="old-price">${{ number_format($product->compare_price, 2) }}</span>
                         @endif
                     </div>
                     @if($product->isInStock())

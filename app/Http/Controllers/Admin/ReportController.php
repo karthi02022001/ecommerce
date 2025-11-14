@@ -24,29 +24,29 @@ class ReportController extends Controller
 
         // Sales statistics
         $stats = [
-            'total_sales' => Order::whereIn('status', ['completed', 'processing', 'shipped'])
+            'total_sales' => Order::whereIn('status', ['delivered', 'processing', 'shipped'])
                 ->whereBetween('created_at', [$dateFrom, $dateTo])
                 ->sum('total_amount'),
 
             'total_orders' => Order::whereBetween('created_at', [$dateFrom, $dateTo])
                 ->count(),
 
-            'average_order' => Order::whereIn('status', ['completed', 'processing', 'shipped'])
+            'average_order' => Order::whereIn('status', ['delivered', 'processing', 'shipped'])
                 ->whereBetween('created_at', [$dateFrom, $dateTo])
                 ->avg('total_amount'),
 
-            'total_tax' => Order::whereIn('status', ['completed', 'processing', 'shipped'])
+            'total_tax' => Order::whereIn('status', ['delivered', 'processing', 'shipped'])
                 ->whereBetween('created_at', [$dateFrom, $dateTo])
                 ->sum('tax_amount'),
 
-            'total_shipping' => Order::whereIn('status', ['completed', 'processing', 'shipped'])
+            'total_shipping' => Order::whereIn('status', ['delivered', 'processing', 'shipped'])
                 ->whereBetween('created_at', [$dateFrom, $dateTo])
                 ->sum('shipping_amount'),
         ];
 
         // Daily sales chart
         $dailySales = Order::selectRaw('DATE(created_at) as date, COUNT(*) as orders, SUM(total_amount) as revenue')
-            ->whereIn('status', ['completed', 'processing', 'shipped'])
+            ->whereIn('status', ['delivered', 'processing', 'shipped'])
             ->whereBetween('created_at', [$dateFrom, $dateTo])
             ->groupBy('date')
             ->orderBy('date')
@@ -61,13 +61,13 @@ class ReportController extends Controller
         // Top selling products
         $topProducts = Product::withCount(['orderItems' => function ($query) use ($dateFrom, $dateTo) {
             $query->whereHas('order', function ($q) use ($dateFrom, $dateTo) {
-                $q->whereIn('status', ['completed', 'processing', 'shipped'])
+                $q->whereIn('status', ['delivered', 'processing', 'shipped'])
                     ->whereBetween('created_at', [$dateFrom, $dateTo]);
             });
         }])
             ->with(['orderItems' => function ($query) use ($dateFrom, $dateTo) {
                 $query->whereHas('order', function ($q) use ($dateFrom, $dateTo) {
-                    $q->whereIn('status', ['completed', 'processing', 'shipped'])
+                    $q->whereIn('status', ['delivered', 'processing', 'shipped'])
                         ->whereBetween('created_at', [$dateFrom, $dateTo]);
                 });
             }])
@@ -127,7 +127,7 @@ class ReportController extends Controller
         $topPerformers = Product::withCount('orderItems')
             ->with(['orderItems' => function ($query) {
                 $query->whereHas('order', function ($q) {
-                    $q->whereIn('status', ['completed', 'processing', 'shipped']);
+                    $q->whereIn('status', ['delivered', 'processing', 'shipped']);
                 });
             }])
             ->get()
@@ -158,7 +158,7 @@ class ReportController extends Controller
             'new_customers' => User::whereBetween('created_at', [$dateFrom, $dateTo])->count(),
             'customers_with_orders' => User::has('orders')->count(),
             'average_customer_value' => User::withSum(['orders' => function ($query) {
-                $query->whereIn('status', ['completed', 'processing', 'shipped']);
+                $query->whereIn('status', ['delivered', 'processing', 'shipped']);
             }], 'total_amount')
                 ->get()
                 ->avg('orders_sum_total_amount'),
@@ -179,7 +179,7 @@ class ReportController extends Controller
 
         // Top customers by spending
         $topCustomersBySpending = User::withSum(['orders' => function ($query) {
-            $query->whereIn('status', ['completed', 'processing', 'shipped']);
+            $query->whereIn('status', ['delivered', 'processing', 'shipped']);
         }], 'total_amount')
             ->orderBy('orders_sum_total_amount', 'desc')
             ->take(10)
