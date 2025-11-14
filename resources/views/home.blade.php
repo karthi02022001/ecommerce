@@ -230,10 +230,10 @@
                                         'count' => $product->reviewCount(),
                                     ])
                                     <div class="product-price-wrapper">
-                                        <span class="product-price">₹{{ number_format($product->price, 2) }}</span>
+                                        <span class="product-price">${{ number_format($product->price, 2) }}</span>
                                         @if ($product->hasDiscount())
                                             <span
-                                                class="old-price">₹{{ number_format($product->compare_price, 2) }}</span>
+                                                class="old-price">${{ number_format($product->compare_price, 2) }}</span>
                                         @endif
                                     </div>
 
@@ -364,10 +364,10 @@
                                     ])
 
                                     <div class="product-price-wrapper">
-                                        <span class="product-price">₹{{ number_format($product->price, 2) }}</span>
+                                        <span class="product-price">${{ number_format($product->price, 2) }}</span>
                                         @if ($product->hasDiscount())
                                             <span
-                                                class="old-price">₹{{ number_format($product->compare_price, 2) }}</span>
+                                                class="old-price">${{ number_format($product->compare_price, 2) }}</span>
                                         @endif
                                     </div>
 
@@ -403,7 +403,7 @@
                             <i class="bi bi-truck"></i>
                         </div>
                         <h5 class="feature-title">{{ __('Free Shipping') }}</h5>
-                        <p class="feature-description">{{ __('Free shipping on orders over ₹500') }}</p>
+                        <p class="feature-description">{{ __('Free shipping on orders over $500') }}</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">

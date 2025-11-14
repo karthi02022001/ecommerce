@@ -750,11 +750,11 @@
 
                         <!-- Price -->
                         <div class="product-detail-price">
-                            ₹{{ number_format($product->price, 2) }}
+                            ${{ number_format($product->price, 2) }}
                             @if ($product->hasDiscount())
-                                <span class="product-compare-price">₹{{ number_format($product->compare_price, 2) }}</span>
+                                <span class="product-compare-price">${{ number_format($product->compare_price, 2) }}</span>
                                 <span class="savings-badge">{{ __('Save') }}
-                                    ₹{{ number_format($product->compare_price - $product->price, 2) }}</span>
+                                    ${{ number_format($product->compare_price - $product->price, 2) }}</span>
                             @endif
                         </div>
 
@@ -839,7 +839,7 @@
                                 </div>
                                 <div class="meta-content">
                                     <h6>{{ __('Free Shipping') }}</h6>
-                                    <p>{{ __('On orders over ₹999') }}</p>
+                                    <p>{{ __('On orders over $999') }}</p>
                                 </div>
                             </div>
 
@@ -1026,7 +1026,7 @@
                                 @php
                                     // Check if user has purchased this product in a completed order
                                     $hasPurchased = auth('web')->user()->orders()
-                                        ->where('status', 'completed')
+                                        ->where('status', 'delivered')
                                         ->whereHas('items', function($q) use ($product) {
                                             $q->where('product_id', $product->id);
                                         })
@@ -1042,7 +1042,7 @@
                                     <div class="text-center mb-4">
                                         @php
                                             $completedOrder = auth('web')->user()->orders()
-                                                ->where('status', 'completed')
+                                                ->where('status', 'delivered')
                                                 ->whereHas('items', function($q) use ($product) {
                                                     $q->where('product_id', $product->id);
                                                 })
@@ -1134,7 +1134,7 @@
                                     @php
                                         // Check if user has purchased this product in a completed order
                                         $hasPurchased = auth('web')->user()->orders()
-                                            ->where('status', 'completed')
+                                            ->where('status', 'delivered')
                                             ->whereHas('items', function($q) use ($product) {
                                                 $q->where('product_id', $product->id);
                                             })
@@ -1144,7 +1144,7 @@
                                     @if($hasPurchased)
                                         @php
                                             $completedOrder = auth('web')->user()->orders()
-                                                ->where('status', 'completed')
+                                                ->where('status', 'delivered')
                                                 ->whereHas('items', function($q) use ($product) {
                                                     $q->where('product_id', $product->id);
                                                 })
@@ -1207,9 +1207,9 @@
                                     <h5 class="product-title">{{ $related->name() }}</h5>
                                 </a>
                                 <div class="product-price">
-                                    ₹{{ number_format($related->price, 2) }}
+                                    ${{ number_format($related->price, 2) }}
                                     @if ($related->hasDiscount())
-                                        <span class="old-price">₹{{ number_format($related->compare_price, 2) }}</span>
+                                        <span class="old-price">${{ number_format($related->compare_price, 2) }}</span>
                                     @endif
                                 </div>
                                 @if ($related->isInStock())

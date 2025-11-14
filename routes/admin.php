@@ -126,9 +126,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->name('updateStatus');
 
             // Quick status update from index page (requires orders.edit permission)  
-            Route::put('/{id}/update-status', [AdminOrderController::class, 'updateStatus'])
+            Route::post('/{id}/update-status', [AdminOrderController::class, 'updateStatus'])
                 ->middleware('admin.permission:orders.edit')
                 ->name('update-status');
+
 
             // Add order note (requires orders.edit permission)
             Route::patch('/{id}/note', [AdminOrderController::class, 'addNote'])
@@ -160,6 +161,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/export/excel', [AdminOrderController::class, 'exportExcel'])
                 ->middleware('admin.permission:orders.view')
                 ->name('export.excel');
+            Route::middleware('admin.permission:orders.view')->group(function () {
+                // Send invoice email
+                Route::post('/{id}/send-invoice', [AdminOrderController::class, 'sendInvoice'])
+                    ->name('sendInvoice');
+
+                // Resend order confirmation
+                Route::post('/{id}/resend-confirmation', [AdminOrderController::class, 'resendConfirmation'])
+                    ->name('resendConfirmation');
+            });
         });
 
 

@@ -118,7 +118,7 @@
     <h3 style="margin: 0 0 15px 0; font-size: 18px; color: #1a1a1a;">Shipping Address</h3>
     <p style="margin: 0; line-height: 1.8; color: #555;">
         <strong>{{ $order->shipping_name }}</strong><br>
-        {{ $order->shipping_address }}<br>
+        {{ $order->address_line_1 }}<br>
         {{ $order->shipping_city }}, {{ $order->shipping_state }} {{ $order->shipping_postal_code }}<br>
         {{ $order->shipping_country }}<br>
         @if($order->shipping_phone)

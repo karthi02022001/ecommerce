@@ -125,7 +125,7 @@
                     <div class="mt-4">
                         <h6 class="text-muted mb-3">{{ __('Order Timeline') }}</h6>
                         <div class="order-timeline">
-                            <div class="timeline-item {{ $order->status === 'pending' ? 'active' : 'completed' }}">
+                            <div class="timeline-item {{ $order->status === 'pending' ? 'active' : 'delivered' }}">
                                 <div class="timeline-marker"></div>
                                 <div class="timeline-content">
                                     <strong>{{ __('Order Placed') }}</strong>
@@ -133,7 +133,7 @@
                                 </div>
                             </div>
                             
-                            <div class="timeline-item {{ in_array($order->status, ['processing', 'shipped', 'delivered']) ? ($order->status === 'processing' ? 'active' : 'completed') : '' }}">
+                            <div class="timeline-item {{ in_array($order->status, ['processing', 'shipped', 'delivered']) ? ($order->status === 'processing' ? 'active' : 'delivered') : '' }}">
                                 <div class="timeline-marker"></div>
                                 <div class="timeline-content">
                                     <strong>{{ __('Processing') }}</strong>
@@ -147,7 +147,7 @@
                                 </div>
                             </div>
                             
-                            <div class="timeline-item {{ in_array($order->status, ['shipped', 'delivered']) ? ($order->status === 'shipped' ? 'active' : 'completed') : '' }}">
+                            <div class="timeline-item {{ in_array($order->status, ['shipped', 'delivered']) ? ($order->status === 'shipped' ? 'active' : 'delivered') : '' }}">
                                 <div class="timeline-marker"></div>
                                 <div class="timeline-content">
                                     <strong>{{ __('Shipped') }}</strong>
@@ -161,7 +161,7 @@
                                 </div>
                             </div>
                             
-                            <div class="timeline-item {{ $order->status === 'delivered' ? 'active completed' : '' }}">
+                            <div class="timeline-item {{ $order->status === 'delivered' ? 'active delivered' : '' }}">
                                 <div class="timeline-marker"></div>
                                 <div class="timeline-content">
                                     <strong>{{ __('Delivered') }}</strong>
@@ -475,6 +475,7 @@
         <div class="modal-content">
             <form method="POST" action="{{ route('admin.orders.update-status', $order->id) }}">
                 @csrf
+                
                 <div class="modal-header bg-teal text-white">
                     <h5 class="modal-title">{{ __('Update Order Status') }}</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>

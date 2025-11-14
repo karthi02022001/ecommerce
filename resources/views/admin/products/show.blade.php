@@ -126,7 +126,7 @@
                         <div class="mb-3">
                             <strong style="font-size: 0.9rem; color: var(--text-muted);">{{ __('Price') }}</strong>
                             <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-top: 5px;">
-                                ₹{{ number_format($product->price, 2) }}
+                                ${{ number_format($product->price, 2) }}
                             </div>
                         </div>
                     </div>
@@ -136,7 +136,7 @@
                         <div class="mb-3">
                             <strong style="font-size: 0.9rem; color: var(--text-muted);">{{ __('Compare Price') }}</strong>
                             <div style="font-size: 1.2rem; margin-top: 5px; text-decoration: line-through; color: var(--text-muted);">
-                                ₹{{ number_format($product->compare_price, 2) }}
+                                ${{ number_format($product->compare_price, 2) }}
                             </div>
                         </div>
                     </div>

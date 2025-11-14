@@ -210,7 +210,7 @@ class Order extends Model
     public function reviewableProducts()
     {
         $reviewedProductIds = $this->reviews()->pluck('product_id')->toArray();
-        
+
         return $this->items()
             ->with('product')
             ->whereNotIn('product_id', $reviewedProductIds)
@@ -218,4 +218,94 @@ class Order extends Model
             ->pluck('product')
             ->filter();
     }
+
+    /**
+     * Accessors for email template compatibility
+     */
+    public function getCustomerNameAttribute()
+    {
+        return $this->customer ? $this->customer->name : 'Guest';
+    }
+
+    public function getTaxAttribute()
+    {
+        return $this->tax_amount;
+    }
+
+    public function getShippingCostAttribute()
+    {
+        return $this->shipping_amount;
+    }
+
+    public function getDiscountAttribute()
+    {
+        return $this->discount_amount;
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->total_amount;
+    }
+
+    public function getCurrencySymbolAttribute()
+    {
+        // Map currency codes to symbols
+        $symbols = [
+            'USD' => '$',
+            'EUR' => '€',
+            'GBP' => '£',
+            'JPY' => '¥',
+            'INR' => '₹',
+        ];
+
+        return $symbols[$this->currency] ?? $this->currency;
+    }
+
+    /**
+     * Shipping address accessors (delegate to shippingAddress relationship)
+     */
+    public function getShippingNameAttribute()
+    {
+        return $this->shippingAddress ? $this->shippingAddress->full_name : '';
+    }
+
+    public function getAddressLine1Attribute()
+    {
+        return $this->shippingAddress ? $this->shippingAddress->address_line_1 : '';
+    }
+
+    public function getAddressLine2Attribute()
+    {
+        return $this->shippingAddress ? $this->shippingAddress->address_line_2 : '';
+    }
+
+    public function getShippingCityAttribute()
+    {
+        return $this->shippingAddress ? $this->shippingAddress->city : '';
+    }
+
+    public function getShippingStateAttribute()
+    {
+        return $this->shippingAddress ? $this->shippingAddress->state : '';
+    }
+
+    public function getShippingPostalCodeAttribute()
+    {
+        return $this->shippingAddress ? $this->shippingAddress->postal_code : '';
+    }
+
+    public function getShippingCountryAttribute()
+    {
+        return $this->shippingAddress ? $this->shippingAddress->country : '';
+    }
+
+    public function getShippingPhoneAttribute()
+    {
+        return $this->shippingAddress ? $this->shippingAddress->phone : '';
+    }
+    public function getCustomerEmailAttribute()
+    {
+        return $this->customer ? $this->customer->email : '';
+    }
+    
 }
